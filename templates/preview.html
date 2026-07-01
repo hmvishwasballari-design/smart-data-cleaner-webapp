@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Preview — Smart Data Cleaner{% endblock %}
+
+{% block content %}
+<section class="page-head">
+  <h1>Preview &amp; Configure Cleaning</h1>
+  <p class="subtitle">{{ job.original_filename }} &mdash; {{ job.n_rows }} rows × {{ job.n_cols }} columns</p>
+</section>
+
+<section class="stats-row">
+  <div class="stat-pill">
+    <span class="stat-value">{{ missing_total }}</span>
+    <span class="stat-label">Missing values</span>
+  </div>
+  <div class="stat-pill">
+    <span class="stat-value">{{ duplicate_total }}</span>
+    <span class="stat-label">Duplicate rows</span>
+  </div>
+  <div class="stat-pill">
+    <span class="stat-value">{{ job.n_cols }}</span>
+    <span class="stat-label">Columns</span>
+  </div>
+</section>
+
+<section class="table-card">
+  <h3>Data Preview <span class="muted">(first 10 rows)</span></h3>
+  <div class="table-scroll">
+    {{ preview_html | safe }}
+  </div>
+</section>
+
+<section class="options-card">
+  <form action="{{ url_for('clean', job_id=job_id) }}" method="post">
+    <h3>Cleaning Options</h3>
+    <div class="options-grid">
+      <label class="option-toggle">
+        <input type="checkbox" name="trim_headers" checked>
+        <span>Trim &amp; normalize column headers</span>
+      </label>
+      <label class="option-toggle">
+        <input type="checkbox" name="drop_empty" checked>
+        <span>Drop fully empty rows/columns</span>
+      </label>
+      <label class="option-toggle">
+        <input type="checkbox" name="remove_duplicates" checked>
+        <span>Remove duplicate rows</span>
+      </label>
+      <label class="option-toggle">
+        <input type="checkbox" name="standardize_text" checked>
+        <span>Standardize text casing &amp; whitespace</span>
+      </label>
+      <label class="option-toggle">
+        <input type="checkbox" name="standardize_dates" checked>
+        <span>Auto-detect &amp; standardize dates</span>
+      </label>
+      <label class="option-toggle">
+        <input type="checkbox" name="fill_numeric" checked>
+        <span>Fill missing numbers with column mean</span>
+      </label>
+      <label class="option-toggle">
+        <input type="checkbox" name="fill_text" checked>
+        <span>Fill missing text with "Unknown"</span>
+      </label>
+    </div>
+
+    <div class="output-format">
+      <label for="output_format">Output format</label>
+      <select name="output_format" id="output_format">
+        <option value="csv" {% if job.ext == 'csv' %}selected{% endif %}>CSV</option>
+        <option value="tsv" {% if job.ext == 'tsv' %}selected{% endif %}>TSV</option>
+        <option value="xlsx" {% if job.ext in ['xlsx','xls'] %}selected{% endif %}>Excel (.xlsx)</option>
+        <option value="json" {% if job.ext == 'json' %}selected{% endif %}>JSON</option>
+      </select>
+    </div>
+
+    <button type="submit" class="btn-primary">Clean Data</button>
+  </form>
+</section>
+{% endblock %}

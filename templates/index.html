@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Upload — Smart Data Cleaner{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <h1>Clean messy data in seconds</h1>
+  <p class="subtitle">
+    Upload a CSV, TSV, Excel, or JSON file. We'll detect missing values, duplicates,
+    inconsistent text, and mixed date formats — then hand you back a perfect, structured file.
+  </p>
+</section>
+
+<section class="upload-card">
+  <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data" id="upload-form">
+    <div class="dropzone" id="dropzone">
+      <input type="file" name="file" id="file-input" accept=".csv,.tsv,.xlsx,.xls,.json" hidden>
+      <div class="dropzone-content">
+        <div class="dropzone-icon">⬆</div>
+        <p class="dropzone-title">Drag &amp; drop your file here</p>
+        <p class="dropzone-sub">or click to browse — CSV, TSV, XLSX, XLS, JSON (max 32MB)</p>
+        <p class="dropzone-filename" id="file-name"></p>
+      </div>
+    </div>
+    <button type="submit" class="btn-primary" id="upload-btn" disabled>Upload &amp; Preview</button>
+  </form>
+</section>
+
+<section class="info-grid">
+  <div class="info-card">
+    <h3>Before Cleaning</h3>
+    <ul>
+      <li>Missing values</li>
+      <li>Duplicate rows</li>
+      <li>Inconsistent text</li>
+      <li>Mixed date formats</li>
+    </ul>
+  </div>
+  <div class="info-card">
+    <h3>After Cleaning</h3>
+    <ul>
+      <li>Clean structured data</li>
+      <li>Standardized text</li>
+      <li>Correct dates</li>
+      <li>Removed duplicates</li>
+    </ul>
+  </div>
+  <div class="info-card">
+    <h3>Supported Formats</h3>
+    <ul>
+      <li>CSV / TSV</li>
+      <li>Excel (.xlsx / .xls)</li>
+      <li>JSON</li>
+      <li>Export to any of the above</li>
+    </ul>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const dropzone = document.getElementById('dropzone');
+  const fileInput = document.getElementById('file-input');
+  const fileNameEl = document.getElementById('file-name');
+  const uploadBtn = document.getElementById('upload-btn');
+
+  dropzone.addEventListener('click', () => fileInput.click());
+
+  ['dragenter', 'dragover'].forEach(evt =>
+    dropzone.addEventListener(evt, (e) => {
+      e.preventDefault();
+      dropzone.classList.add('dragover');
+    })
+  );
+
+  ['dragleave', 'drop'].forEach(evt =>
+    dropzone.addEventListener(evt, (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('dragover');
+    })
+  );
+
+  dropzone.addEventListener('drop', (e) => {
+    const files = e.dataTransfer.files;
+    if (files.length) {
+      fileInput.files = files;
+      updateFileName();
+    }
+  });
+
+  fileInput.addEventListener('change', updateFileName);
+
+  function updateFileName() {
+    if (fileInput.files.length) {
+      fileNameEl.textContent = "Selected: " + fileInput.files[0].name;
+      uploadBtn.disabled = false;
+    } else {
+      fileNameEl.textContent = "";
+      uploadBtn.disabled = true;
+    }
+  }
+</script>
+{% endblock %}

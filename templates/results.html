@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Results — Smart Data Cleaner{% endblock %}
+
+{% block content %}
+<section class="page-head">
+  <h1>Cleaning Dashboard</h1>
+  <p class="subtitle">{{ job.original_filename }} &mdash; cleaned successfully</p>
+</section>
+
+<section class="score-card">
+  <div class="score-circle">
+    <span class="score-value">{{ stats.cleaning_score }}%</span>
+    <span class="score-label">Cleaning Score</span>
+  </div>
+  <div class="score-details">
+    <div class="compare-row">
+      <span class="compare-label">Rows</span>
+      <span class="compare-value">{{ stats.rows_before }} → {{ stats.rows_after }}</span>
+    </div>
+    <div class="compare-row">
+      <span class="compare-label">Columns</span>
+      <span class="compare-value">{{ stats.cols_before }} → {{ stats.cols_after }}</span>
+    </div>
+    <div class="compare-row">
+      <span class="compare-label">Missing values</span>
+      <span class="compare-value">{{ stats.missing_before }} → {{ stats.missing_after }}</span>
+    </div>
+    <div class="compare-row">
+      <span class="compare-label">Duplicate rows</span>
+      <span class="compare-value">{{ stats.duplicates_before }} → {{ stats.duplicates_after }}</span>
+    </div>
+  </div>
+</section>
+
+<section class="steps-card">
+  <h3>Steps Applied</h3>
+  <ul class="steps-list">
+    {% for step in stats.steps %}
+      <li>{{ step }}</li>
+    {% endfor %}
+  </ul>
+</section>
+
+<section class="table-card">
+  <h3>Cleaned Data Preview <span class="muted">(first 10 rows)</span></h3>
+  <div class="table-scroll">
+    {{ job.cleaned_preview_html | safe }}
+  </div>
+</section>
+
+<section class="actions-row">
+  <a href="{{ url_for('download', job_id=job_id) }}" class="btn-primary">Download Cleaned File</a>
+  <a href="{{ url_for('index') }}" class="btn-secondary">Clean Another File</a>
+</section>
+{% endblock %}
