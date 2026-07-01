@@ -57,6 +57,7 @@ def write_any(df, filepath, ext):
 
 
 def is_date_like(series, sample=20):
+    return False
     """Heuristic: does this object/string column look like dates?"""
     s = series.dropna().astype(str)
     if s.empty:
